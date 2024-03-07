@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's the Weather?</title>
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="icon" type="image/x-icon" href="/media/icons/logo/logo.jpg">
+    <link rel="stylesheet" href="./styles/styleLoading.css">
+    <link rel="stylesheet" href="./styles/styleMain.css">
+    <link rel="stylesheet" href="./styles/styleWeatherReport.css">
+    
+    <!-- scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/32cc9c8210.js" crossorigin="anonymous"></script>
+    <script type="module" defer src="./modules/script.js"></script>
+</head>
+<body>
+    <!-- initially unhide this -->
+    <div class="loading-container">
+        <!-- a loading screen till the bg gets loaded -->
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading...</p>
+    </div>
+
+    <!-- initially hide this -->
+    <main class="main-outer-container hide">
+        <!-- navbar -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <img src="./media/icons/logo/logo.jpg" alt="Logo" class="logo">
+                <!-- <div class="logo-container">
+                </div> -->
+                <div class="logo-name-container">
+                    <p class="logo-name-desc">What's the</p>
+                    <p class="logo-name-desc">WEATHER?</p>
+                </div>
+            </div>
+        </nav>
+
+        <div class="form-outer-container">
+            <div class="form-inner-container">
+                <h2 class="form-heading">Choose Your Preference</h2>
+                <div class="place-container">
+                    <div class="place-input-container">
+                        <input id="input-bar" type="text" class="place-input" placeholder="Enter a place">
+                        <button class="btn place-btn">GO</button>
+                    </div>
+                    <p id="em-custom-place" class="error-message hide">Error text</p>
+                </div>
+                <div class="divider-div-container">
+                    <div class="divider-line"></div>
+                    <span class="dividing-text">OR</span>
+                    <div class="divider-line"></div>
+                </div>
+                <div class="current-location-container">
+                    <button class="btn current-loc-btn">Use my Current Location &nbsp;<i class="fa-solid fa-location-crosshairs fa-lg" style="color: #ffffff;"></i></button>
+                    <p id="em-current-loc" class="error-message hide">Error text</p>
+                </div>
+            </div>
+
+            <div class="report-container hide">
+                <div class="current-info-container">
+                    <div class="box1">
+                        <div class="current-weather-logo-container">
+                            <img class="current-weather-logo" src="http://openweathermap.org/img/wn/01d@2x.png" alt="weather-logo">
+                        </div>
+                        <div class="temperature-container">
+                            <p class="current-temp">27</p>
+                            <p class="C-selector temperature-selected">°C</p>
+                            <p class="divider">&nbsp;|</p>
+                            <p class="F-selector">&nbsp;°F</p>
+                        </div>
+                    </div>
+                    <div class="box2">
+                        <div class="place-details-container">
+                            <p class="place">Kolkata</p>
+                            <p class="time">Tuesday, 10:00 am</p>
+                            <p class="weather-description">Sunny</p>
+                        </div>
+                        <div class="weather-stats-container">
+                            <p class="current-feels">Feels like: <span id="current-feels-text">30</span>°</p>
+                            <p class="current-precipitation">Precipitaion: <span id="current-precipitation-text">0</span>%</p>
+                            <p class="current-humidity">Humidity: <span id="current-humidity-text">70</span>%</p>
+                            <p class="current-wind">Wind: <span id="current-wind-text">11</span>&nbsp;km/h</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- for later -->
+                <div class="hourly-info-container">
+                    <div class="chart-container">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+                <div class="daily-info-container">
+                    <!-- <div class="day-card day-card-selected">
+                        <p class="day">Tue</p>
+                        <div class="weather-logo-container">
+                            <img class="weather-logo" src="http://openweathermap.org/img/wn/01d@2x.png" alt="weather-logo">
+                        </div>
+                        <p class="max-min">31° 21°</p>
+                    </div>
+                    <div class="day-card">
+                        <p class="day">Tue</p>
+                        <div class="weather-logo-container">
+                            <img class="weather-logo" src="http://openweathermap.org/img/wn/01d@2x.png" alt="weather-logo">
+                        </div>
+                        <p class="max-min">31° 21°</p>
+                    </div> -->
+                </div>
+                <p id="reset-para">Search another location?</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
