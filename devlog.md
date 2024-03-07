@@ -111,3 +111,52 @@ Planning on starting off the frontend for displaying the weather results from to
     ( *cries in pain* 😭 )
 
 Planning on fixing the above issues tomorrow, along with figuring out how to work with charts in js. If I'm able to grasp it, will include it day after, else will think about some alternative (maybe).
+
+
+<br>
+
+## DAY 5 (06/03/24)
+### Bug fixes + Creating hourly data chart(Chart.js) + Research
+<br>
+
+**Fixed previously detected bugs + Added features**
+- CSS responsiveness
+- handling undefined properties from API results
+- 'enter' support for input
+- temperature convertor 
+
+<br>
+
+**Rendered the hourly data chart**
+- Used Chart.js to reneder the responsive and sleek looking graph for how temperatures fluctuate hourly for a particular day 😉
+- Fixed reponsiveness as well
+
+<br>
+
+**Researching for hiding API keys**
+- Since I have used API keys in this project (although free), they must be kept private.
+- However after a bit of resarch I came to know that we cannot really hide any sensitive information if we are just building a frontend project (like mine is).
+- Think about it, no matter what we do, the browser will send a request to the URL present in our code, it will need to replace the varibale in place of our API_KEY, and we can easily view it by inspeting the source code.
+- Unfortunately I had to upload the codes as is, but if we were using a backend part as well (which I will in my future projects), we can use bundlers or .env files to hide access to our sensitive information.
+
+<br>
+
+## DAY 6 (07/03/24)
+### Finishing up
+<br>
+
+**Cleaning up the Source Code**
+- removing unnecessary console.logs
+- organizing everything in place (which was mostly done during development itself 😊)
+
+<br>
+
+**Documentation**
+- Writing up the README.md for the project and uploading
+
+
+<br>
+Overall it was a very fun week I got to experience while working on this project. I learned so many new things, handled new errors, improved my skills in reading documentations and improved my code writing and understanrding as well. 
+
+<br>
+Until next time!! 🙋🏻‍♂️

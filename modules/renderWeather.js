@@ -1,4 +1,5 @@
-// a module that returns a function which renders the weather report into the display form
+// module that renders the weather report
+// returns a function which takes in the current, hourly & daily weather data along with the address and renders the weather report
 
 // SELECTING COMPONENTS
 // for current report section
@@ -7,7 +8,6 @@ const currentWeatherImageELement= document.querySelector('.current-weather-logo'
 const currentTemperatureElement= document.querySelector('.current-temp');
 const cSelector= document.querySelector('.C-selector');
 const fSelector= document.querySelector('.F-selector');
-// const temperatureContainer= document.querySelector('.temperature-selector');
 const currentPlace= document.querySelector('.place');
 const currentTime= document.querySelector('.time');
 const currentWeatherDesc= document.querySelector('.weather-description');
@@ -23,23 +23,25 @@ const weekDaysShort= ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 // for daily reports section
 const dailyInfoContainer= document.querySelector('.daily-info-container');
-let currActiveDay= 0;   // initally 1st day will be active one
-let currTemperatureUnit= 'C';
-let myChart;
+
+// GLOBAL VARIABLES
+let currActiveDay= 0;           // initally 1st day will be active one
+let currTemperatureUnit= 'C';   // intially choosing Celsius as the temperature unit
+let myChart;                    // variable to store the chart object created
 
 const setCurrentReport= function(currentData, initial= false, addressData){
     // function to render current weather report section 
+
     if(initial){
-        // will display some different features
-        // since we have different objects for current and daily data
+        // will display some additional features (feels like temperature, humidity) => since we have different objects for current and daily data
         currentWeatherImageELement.src= currentData.weather_image;
         currentTemperatureElement.textContent= currentData[`temperature${currTemperatureUnit}`];
         cSelector.classList.add('temperature-selected');
         currentPlace.textContent= `${addressData.city || addressData.state || addressData.country}`;
         const date= currentData.time;
-        // currentTime.textContent= `${weekDays[date.getDay()]}, ${(date.getHours()>12)? `${date.getHours()-12}:00 pm` : `${date.getHours()}:00 am`}`;
+
+        // converting the time of request as: 2:47 pm => 2:00 pm
         currentTime.textContent= `${weekDays[date.getDay()]}, ${(date.getHours()>=12)? `${(date.getHours()==12)? "12": date.getHours()-12}:00 pm` : `${(date.getHours()==0)? "12": date.getHours()}:00 am`}`;
-        // (date.getHours()>=12)? `${(date.getHours()==12)? "12": date.getHours()-12} pm` : `${(date.getHours()==0)? "12": date.getHours()} am`);
         currentWeatherDesc.textContent= currentData.weather_description;
         currentFeels.textContent= currentData[`feelsLike${currTemperatureUnit}`];
         currentPrecipitation.textContent= currentData.precipitation;
@@ -47,7 +49,8 @@ const setCurrentReport= function(currentData, initial= false, addressData){
         currentWind.textContent= currentData.windSpeed;
         return;
     }
-    // need to set data as per the daily available data
+
+    // need to set data as per the daily weather report data
     currentWeatherImageELement.src= currentData.weather_image;
     currentTemperatureElement.textContent= currentData[`tempMax${currTemperatureUnit}`];
     currentTime.textContent= weekDays[currentData.date.getDay()];
@@ -55,12 +58,15 @@ const setCurrentReport= function(currentData, initial= false, addressData){
     currentPrecipitation.textContent= currentData.precipitation;
     currentWind.textContent= currentData.windSpeedMax;
 
-    // hide extra info
+    // hide additional weather info
     currentHumidityElement.classList.add('hide');
     currentFeelsElement.classList.add('hide');
 };
 
 const createChart= function(hourlyData){
+    // function to create the hourly temperature chart (using Chart.js) for the currently active day
+
+    // selecting the canvas on which the chart will be drawn
 	const canvasElement= document.getElementById('myChart');
 
 	// changing default styling
@@ -69,10 +75,11 @@ const createChart= function(hourlyData){
 	Chart.defaults.font.family= "Roboto";
 	// Chart.defaults.font.size= 16;	// 12 default
 
-	// getting the formatted time labels (x-axis)
+	// getting the formatted time labels (x-axis) => (12am, 1am, ...)
 	const timeLabels= hourlyData[0].time.map(date => (date.getHours()>=12)? `${(date.getHours()==12)? "12": date.getHours()-12} pm` : `${(date.getHours()==0)? "12": date.getHours()} am`);
-	console.log(timeLabels);
+	// console.log(timeLabels);
 	
+    // returning the created chart object
 	return new Chart(canvasElement, {
 		type: 'line',
 		data: {
@@ -123,17 +130,20 @@ const createChart= function(hourlyData){
 };
 
 const updateChart= function(chart, newDayData){
+    // function to update the chart with new data values
+
 	const newLabels= newDayData.time.map(date => (date.getHours()>=12)? `${(date.getHours()==12)? "12": date.getHours()-12} pm` : `${(date.getHours()==0)? "12": date.getHours()} am`);
 	chart.data.labels= newLabels;
 	chart.data.datasets.forEach((dataset) => {
-		dataset.label= `Temperature (°${currTemperatureUnit})`;			// choose labels acc to current temperature unit
-		dataset.data= newDayData[`temperature${currTemperatureUnit}`];	// choose C/F
+		dataset.label= `Temperature (°${currTemperatureUnit})`;			// choose labels according to current temperature unit
+		dataset.data= newDayData[`temperature${currTemperatureUnit}`];	// choose Celsius/Fahrenheit
     });
 	chart.update();
 };
 
 const setDailyReport= function(dailyData){
-    // function to render the daily weather
+    // function to render the daily weather summary for each day
+
     // map over the dailyData and render a 'day-card' for each day
     // we can give them IDs as the idx value ;)
     dailyData.map((dayCard, idx)=>{
@@ -146,7 +156,6 @@ const setDailyReport= function(dailyData){
         <p class="max-min"><span class="max-daily">${dayCard.tempMaxC}</span>° <span class="min-daily">${dayCard.tempMinC}</span>°</p>
     </div>`);
     });
-    // console.log(dailyInfoContainer.children);
 };
 
 const changeTemperatureUnit= function(hourlyData, dailyData, addressData){
@@ -183,7 +192,6 @@ const changeTemperatureUnit= function(hourlyData, dailyData, addressData){
     currTemperatureUnit= (currTemperatureUnit==='C')? 'F': 'C';
     
     // update current temperature section
-    // currentTemperatureElement.textContent= myConvertor(currentDayObject[`tempMax${currTemperatureUnit}`]);
     setCurrentReport(currentDayObject, false, addressData);
 
     // update the chart
@@ -191,11 +199,11 @@ const changeTemperatureUnit= function(hourlyData, dailyData, addressData){
 }
 
 const renderWeather= function(currentData, hourlyData, dailyData, addressData){
-    // function to render the weather report
+    // function to render the weather report consisting of current, hourly and daily data
 
-    setCurrentReport(currentData, true, addressData); // initially rendering current data
-    myChart= createChart(hourlyData);
-    setDailyReport(dailyData);
+    setCurrentReport(currentData, true, addressData);   // initially rendering current weather data
+    myChart= createChart(hourlyData);                   // creating the hourly weather data chart
+    setDailyReport(dailyData);                          // rendering daily weather data
 
     // now making the eventlistner for dailyReportContainer
     dailyInfoContainer.addEventListener('click', function(event){
@@ -206,7 +214,7 @@ const renderWeather= function(currentData, hourlyData, dailyData, addressData){
         // we need to find the closest 'day-card' element of the event.target element
         const cardClicked= event.target.closest('.day-card');
         
-        if(!cardClicked) // if gap between the cards are clicked
+        if(!cardClicked) // if the gap between the cards are clicked
             return;
 
         // now have to remove active card status from currently active 'day-card'
@@ -241,7 +249,7 @@ const renderWeather= function(currentData, hourlyData, dailyData, addressData){
         this.classList.add('temperature-selected');
     });
 
-    // event listner for reset text
+    // event listner for reset state
     resetElement.addEventListener('click', ()=>location.reload());
 };
 

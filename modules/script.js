@@ -1,9 +1,6 @@
 'use strict';
 
-// efbfd936aaad164a74e6e78129f9fa6e
-// https://api.openweathermap.org/data/2.5/forecast?lat=${coords.latitude}&lon=${coords.longitude}&units=metric&appid=efbfd936aaad164a74e6e78129f9fa6e
-// https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}&hourly=temperature_2m
-
+// IMPORTING MODULES
 import { getCurrentLocation } from "./currentLocation.js";
 import { getWeather } from "./currentWeather.js";
 import { geocode } from "./geocoding.js";
@@ -11,7 +8,7 @@ import { organize } from "./organizeData.js";
 import { reverseGeocode } from "./reverseGeocoding.js";
 import { renderWeather } from "./renderWeather.js";
 
-// SELECTING COMPONENTS
+// SELECTING DOM ELEMENTS
 const mainOuterContainer= document.querySelector('.main-outer-container');
 const formInnerContainer= document.querySelector('.form-inner-container');
 const weatherReportContainer= document.querySelector('.report-container');
@@ -21,9 +18,9 @@ const btnCustomPlace= document.querySelector('.place-btn');
 const btncurrLocation= document.querySelector('.current-loc-btn');
 const inputElement= document.querySelector('.place-input');
 
-
+// HELPER FUNCTIONS
 const loadImage= function(imageElement){
-    // function which returns a promise when the bg img is loaded in current session
+    // function which returns a promise when the background image is loaded for the current session
     return new Promise((resolve, reject)=>{
         imageElement.onload= resolve;
         imageElement.onerror= reject;
@@ -31,15 +28,14 @@ const loadImage= function(imageElement){
 };
 
 const wait= async function(sec){
-    // function which returns a promise when timer runs out
+    // function which returns a promise when the timer for specified time runs out
     return new Promise(resolve=>{
-        // console.log("watiintg for : " + sec);
         setTimeout(resolve,sec*1000);
     });
 };
 
 
-// helper functions to display error messages
+// HELPER FUNCTIONS TO DISPLAY ERROR MESSAGES
 const displayCustomLocationError= function(errorMessage){
     const errorElement= document.getElementById('em-custom-place');
     errorElement.textContent= errorMessage;
@@ -53,14 +49,15 @@ const displayCurrLocationError= function(errorMessage){
     unloading(btncurrLocation);
 };
 const loading= function(buttonElement){
-    // function to disable a button and show loading symbol
+    // function to disable a button and show loading status
+
     buttonElement.disabled= true;
 
-    // diable both buttons
+    // diable both buttons (since one can still use the other one to spam requests :/)
     btnCustomPlace.classList.add('disabled');
     btncurrLocation.classList.add('disabled');
 
-    // height of the spinner added must be height of the content in current button
+    // height of the loading spinner added must be height of the content in current button
     const height= +getComputedStyle(buttonElement).height.slice(0,-2);
     const padding= +getComputedStyle(buttonElement).paddingTop.slice(0,-2) + +getComputedStyle(buttonElement).paddingBottom.slice(0,-2);
     const border= +getComputedStyle(buttonElement).borderTopWidth.slice(0,-2) + +getComputedStyle(buttonElement).borderBottomWidth.slice(0,-2);
@@ -79,8 +76,10 @@ const unloading= function(buttonElement, ogHTML){
 }
 
 
-// event handlers
+// EVENT HANDLERS
 const customLocationHandler= async function(event){
+    // function which gets the weather report for a custom location
+
     const input= inputElement.value;
     if(!input){
         alert("Please enter a location!");
@@ -98,8 +97,6 @@ const customLocationHandler= async function(event){
             displayCustomLocationError("Couldn't find this location :')");
             return;
         }
-
-        // console.log(geocodeResult);
         
         // From the geocodeResult, we will use: addr_line1, city, state, country
         const placeDetails={
@@ -110,26 +107,24 @@ const customLocationHandler= async function(event){
             latitude: geocodeResult.lat,
             longitude: geocodeResult.lon,
         };
-        console.log(placeDetails);
-
-
+        // console.log(placeDetails);
 
         // now use the weather API
         const weatherDetails= await getWeather(placeDetails.latitude, placeDetails.longitude);
-        console.log(weatherDetails);
+        // console.log(weatherDetails);
 
         // reformatting raw weather data
         const {current, daily, hourly}= organize(weatherDetails);
-        console.log(current);
-        console.log(daily);
-        console.log(hourly);
+
+        // viewing the received data
+        // console.log(current);
+        // console.log(daily);
+        // console.log(hourly);
 
         // now need display weather report
-        // console.log(weatherReportContainer);
         renderWeather(current,hourly,daily, placeDetails);
         formInnerContainer.classList.toggle('hide');
         weatherReportContainer.classList.toggle('hide');
-
     }
     catch(error){
         console.log(error);
@@ -140,8 +135,7 @@ const customLocationHandler= async function(event){
     }
 };
 const currentLocationHandler= async function(event){
-    // this func won't receive a error, as helper function handles it
-    // but still for the sake of it
+    // function which gets the weather report for user's current location
 
     const ogBtnText= btncurrLocation.innerHTML;
     try{
@@ -157,42 +151,39 @@ const currentLocationHandler= async function(event){
             return;
         }
         const coords= result.coords;
-        console.log(coords);
+        // console.log(coords);
 
         // NOTE: I won't be calling the weather API, unless I can determine 
         // the address of the user, since I need that while displaying the weather
-        // Hence, I'm not calling the weather API in parallel, as it could be wasted
+        // Hence, I'm not calling the weather API in parallel, as that call could be wasted
 
         // getting address of current location using geocoding API
         const reverseGeocodeResult= await reverseGeocode(coords.latitude, coords.longitude);
-        console.log(reverseGeocodeResult);
+        // console.log(reverseGeocodeResult);
 
         if(reverseGeocodeResult==-1){
             // display an error msg and return
             displayCurrLocationError("Error getting info for your location :/");
             return;
         }
-        // NOTE: no need to refine reverseGeocodeResult as it is already done
-
+        // NOTE: no need to refine reverseGeocodeResult as it is already done by that module itself
         
         // getting the weather details using weather API
         const weatherDetails= await getWeather(coords.latitude, coords.longitude);
-        console.log(weatherDetails);
+        // console.log(weatherDetails);
 
         // reformatting the raw data
         const {current, daily, hourly}= organize(weatherDetails);
-        console.log(current);
-        console.log(daily);
-        console.log(hourly);
-
+        
+        // checking what data has been received
+        // console.log(current);
+        // console.log(daily);
+        // console.log(hourly);
 
         // now need display weather report 
-        // console.log(weatherReportContainer);
         renderWeather(current,hourly,daily, reverseGeocodeResult);
         formInnerContainer.classList.toggle('hide');
         weatherReportContainer.classList.toggle('hide');
-
-
     }
     catch(error){
         console.log(error);
@@ -203,23 +194,25 @@ const currentLocationHandler= async function(event){
     }
 };
 const inputEnterHandler= function(event){
+    // function which enables input handling when 'Enter' key is pressed
+
     if(event.key==="Enter")
         customLocationHandler(event);
 }
 
-// event listeners for location input form
+// EVENT LISTENERS
 btnCustomPlace.addEventListener('click', customLocationHandler);
 btncurrLocation.addEventListener('click', currentLocationHandler);
 inputElement.addEventListener('keyup', inputEnterHandler);
 
 
-// waiting till the bg image of main page gets loaded (for slow connections)
+// waiting till the background image of the main page gets loaded (for slow connections)
 try{
     const bgImageURL= "./media/backgrounds/earth.jpg";
     const image= new Image();
     image.src= bgImageURL;
     await loadImage(image);
-    console.log("image loaded. Assigning image src as bg img");
+    // console.log("image loaded. Assigning image src as bg img");
     
     mainOuterContainer.style.backgroundImage= `url(${bgImageURL})`;             // adding img as bg
     mainOuterContainer.classList.remove('hide');                                // showing main screen

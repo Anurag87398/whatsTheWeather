@@ -1,8 +1,12 @@
-// this module organizes data into the necessary format and returns the function for it
+// module to organize the data into the necessary format 
+// returns the function for organizing the data which takes in the raw weather report and returns a nicely formatted one
+
+
 import {WMO} from "./weatherCodes.js";
 
 const getDailyData= function(dailyObject, timeOfDay, daysCount){
-    // a function which returns a well formated array of temperature info objects, day-wise
+    // this function returns daily weather forecast for 'daysCount' days
+
     const dailyData= [];
     
     for(let i=0; i<daysCount; i++){
@@ -13,28 +17,23 @@ const getDailyData= function(dailyObject, timeOfDay, daysCount){
         currDayData.tempMinC= Math.round(dailyObject.temperature_2m_min[i]);
         currDayData.tempMaxF= Math.round(currDayData.tempMaxC * 9/5) + 32;
         currDayData.tempMinF= Math.round(currDayData.tempMinC * 9/5) + 32;
-        // add an avg temp either here itself, or use hourly data for more precision
-        // currDayData.tempMeanF= Math.round(currDayData.tempMeanC * 9/5) + 32;
         currDayData.windSpeedMax= Math.round(dailyObject.wind_speed_10m_max[i]);
         currDayData.precipitation= dailyObject.precipitation_probability_mean[i];
         currDayData.sunrise= new Date(dailyObject.sunrise[i]);
         currDayData.sunset= new Date(dailyObject.sunset[i]);
         currDayData.weather_code= dailyObject.weather_code[i];
-        // checking currently if it is day/night
         
-
         currDayData.weather_description= WMO[currDayData.weather_code][timeOfDay]["description"];
         currDayData.weather_image= WMO[currDayData.weather_code][timeOfDay]["image"];
 
-        // console.log(currDayData);
         dailyData.push(currDayData);
     }
-    // console.log(dailyData);
     return dailyData;
 };
 
 const getCurrentData= function(currentObject, timeOfDay, currTime){
-    // a function to return weather info of the current day
+    // this function returns the weather info of the current day at the time of the request
+
     const currentData= {
         time: currTime,
         temperatureC: Math.round(currentObject.temperature_2m),
@@ -50,12 +49,11 @@ const getCurrentData= function(currentObject, timeOfDay, currTime){
     currentData.weather_description= WMO[currentData.weather_code][timeOfDay]["description"];
     currentData.weather_image= WMO[currentData.weather_code][timeOfDay]["image"];
 
-    // console.log(currentData);
     return currentData;
 };
 
 const getHourlyData= function(hourlyObject, daysCount, currTime){
-    // a function to return info about 'daysCount' days, organized hourly
+    // this function returns hourly weather forecast for 'daysCount' days
     
     // i have n days, each day has 24hrs => i have (n*24) time values
     // from (n*24), 
@@ -116,17 +114,16 @@ const getHourlyData= function(hourlyObject, daysCount, currTime){
     hourlyData[0].windSpeed= hourlyData[0].windSpeed.concat(hourlyData[1].windSpeed.slice(0,idx));
     hourlyData[0].windDirection= hourlyData[0].windDirection.concat(hourlyData[1].windDirection.slice(0,idx));
 
-    // console.log(hourlyData);
     return hourlyData;
 };
 
 const organize= function(weatherRawObject){
-    // this func organizes the raw weather obj into current, daily & hourly data objs
+    // this func organizes the raw weather obectj into current, daily & hourly data objects
     // it returns an object containing the three
 
     // general info about current req
     // const timeOfDay= (weatherRawObject.current.is_day===1)? "day" : "night";
-    const timeOfDay= "day";
+    const timeOfDay= "day";     // fixing time as day, since WMO images for night are  just for dark theme and not for night time :')
     const daysCount= weatherRawObject.daily.time.length;
     const currTime= new Date(weatherRawObject.current.time);
 
@@ -138,11 +135,6 @@ const organize= function(weatherRawObject){
     
     // organizing hourly info
     const hourlyData= getHourlyData(weatherRawObject.hourly, daysCount, currTime);
-    
-    
-    // console.log(hourlyData);
-    // console.log(currData);
-    // console.log(dailyData);
 
     return {
         current: currData,
