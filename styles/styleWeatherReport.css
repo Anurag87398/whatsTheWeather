@@ -67,6 +67,9 @@
 .chart-container{
     /* background-color: cyan; */
 }
+.chart-container:hover{
+    cursor: pointer;
+}
 
 
 
