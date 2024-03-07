@@ -135,7 +135,7 @@ Planning on fixing the above issues tomorrow, along with figuring out how to wor
 
 **Researching for hiding API keys**
 - Since I have used API keys in this project (although free), they must be kept private.
-- However after a bit of resarch I came to know that we cannot really hide any sensitive information if we are just building a frontend project (like mine is).
+- However after a bit of resarch I came to know that we cannot really hide any sensitive information if we are just building a frontend project without any frameworks (like mine is 😞).
 - Think about it, no matter what we do, the browser will send a request to the URL present in our code, it will need to replace the varibale in place of our API_KEY, and we can easily view it by inspeting the source code.
 - Unfortunately I had to upload the codes as is, but if we were using a backend part as well (which I will in my future projects), we can use bundlers or .env files to hide access to our sensitive information.
 
